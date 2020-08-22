@@ -9,7 +9,7 @@ RUN apt-get update && \
     DOWNLOAD_URL=$(curl -s "https://api.github.com/repos/Radarr/Radarr/releases/tags/${VERSION}" | jq -r '.assets[].browser_download_url' |grep linux) && \
     curl -L "${DOWNLOAD_URL}" | tar zxvf - && \
     mv Radarr* radarr && \
-    curl -L "https://mediaarea.net/repo/deb/repo-mediaarea_1.0-12_all.deb" -o /radarr/mediaarea.deb && \
+    curl -L "https://mediaarea.net/repo/deb/repo-mediaarea_1.0-13_all.deb" -o /radarr/mediaarea.deb && \
     chown -R 1001:0 /radarr && \
     chmod -R g=u /radarr
 
