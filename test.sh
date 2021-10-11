@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
-mono --debug Radarr.exe -nobrowser -data=/config &
+set -eu
+
+/radarr/Radarr -nobrowser -data=/config &
 
 export DEBIAN_FRONTEND=noninteractive
 apt-get -q update

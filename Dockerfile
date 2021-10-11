@@ -6,10 +6,11 @@ ARG RADARR_BRANCH="develop"
 RUN apt-get update && \
     apt-get install -y curl jq && \
     if [ "latest" != "$RADARR_VERSION" ];then VERSION=$RADARR_VERSION ; else VERSION=$(curl -sX GET "https://api.github.com/repos/Radarr/Radarr/releases" | jq -r '.[0] | .tag_name');fi && \
-    DOWNLOAD_URL=$(curl -s "https://api.github.com/repos/Radarr/Radarr/releases/tags/${VERSION}" | jq -r '.assets[].browser_download_url' |grep '\.linux\.tar\.gz') && \
+    DOWNLOAD_URL=$(curl -s "https://api.github.com/repos/Radarr/Radarr/releases/tags/${VERSION}" | jq -r '.assets[].browser_download_url' |grep '\.linux-core-x64\.tar\.gz') && \
     curl -L "${DOWNLOAD_URL}" | tar zxvf - && \
     mv Radarr* radarr && \
-    curl -L "https://mediaarea.net/repo/deb/repo-mediaarea_1.0-13_all.deb" -o /radarr/mediaarea.deb && \
+    rm -rf /radarr/bin/Radarr.Update && \
+    curl -o /radarr/repo-mediaarea.deb https://mediaarea.net/repo/deb/repo-mediaarea_1.0-19_all.deb && \
     chown -R 1001:0 /radarr && \
     chmod -R g=u /radarr
 
@@ -28,16 +29,13 @@ ENV TZ=Etc/UTC \
     DEBCONF_NONINTERACTIVE_SEEN=true 
 
 RUN apt-get update && \
-    apt-get install -y apt-transport-https gnupg gpgv2 ca-certificates && \
-    UBUNTU_CODENAME=$(grep UBUNTU_CODENAME /etc/os-release|awk -F'=' '{print $NF}') && \
-    echo "deb https://mediaarea.net/repo/deb/ubuntu $UBUNTU_CODENAME main" | tee /etc/apt/sources.list.d/mediaarea.list && \
-    dpkg -i /radarr/mediaarea.deb && \
+    apt-get install -y apt-transport-https ca-certificates && \
+    dpkg -i /radarr/repo-mediaarea.deb && \
     apt-get update && \
-    apt-get install -y --no-install-recommends --no-install-suggests bzip2 ca-certificates-mono libcurl4-openssl-dev mediainfo mono-devel mono-vbnc python sqlite3 unzip && \
+    apt-get install -y --no-install-recommends --no-install-suggests mediainfo sqlite3 unzip libicu66 && \
     apt-get upgrade -y && \
     rm -rf /var/lib/apt/lists/* && \
     echo "UpdateMethod=docker\nBranch=${RADARR_BRANCH}\nPackageVersion=${VERSION}\nPackageAuthor=ParFlesh" > /radarr/package_info && \
-    rm -rf /radarr/bin/Radarr.Update && \
     mkdir /config && \
     chown 1001:0 /config && \
     chmod 770 /config
@@ -45,5 +43,5 @@ RUN apt-get update && \
 EXPOSE 7878
 VOLUME ["/config"]
 WORKDIR /radarr
-ENTRYPOINT ["mono", "--debug", "Radarr.exe"]
+ENTRYPOINT ["/radarr/Radarr"]
 CMD ["-nobrowser", "-data=/config"]
