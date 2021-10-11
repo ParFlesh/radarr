@@ -35,8 +35,8 @@ jobs:
       uses: docker/login-action@v1.10.0
       with:
         registry: quay.io
-        username: ${{ secrets.RegistryUser }}
-        password: ${{ secrets.RegistryPassword }}
+        username: ${{ secrets.REGISTRY_USER }}
+        password: ${{ secrets.REGISTRY_PASSWORD }}
     - name: Push
       id: docker_push
       uses: docker/build-push-action@v2
