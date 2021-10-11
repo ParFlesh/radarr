@@ -13,13 +13,12 @@ env:
   PUSH_TAG: quay.io/parflesh/radarr:latest
 
 jobs:
-
-  build:
-
+  docker:
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
     - name: Build
       id: docker_build
       uses: docker/build-push-action@v2

@@ -19,7 +19,7 @@ RUN chmod 755 /radarr/test.sh && \
     chown 1001:0 /radarr/test.sh
 
 FROM ubuntu:rolling
-MAINTAINER ParFlesh
+LABEL maintainer='ParFlesh'
 
 COPY --chown=1001:0 --from=artifact /radarr /radarr
 
