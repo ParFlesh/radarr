@@ -1,4 +1,4 @@
-FROM ubuntu:latest as artifact
+FROM ubuntu:focal as artifact
 
 ARG RADARR_VERSION=latest
 ARG RADARR_BRANCH="develop"
@@ -19,7 +19,7 @@ ADD test.sh /radarr/
 RUN chmod 755 /radarr/test.sh && \
     chown 1001:0 /radarr/test.sh
 
-FROM ubuntu:latest
+FROM ubuntu:focal
 LABEL maintainer='ParFlesh'
 
 COPY --chown=1001:0 --from=artifact /radarr /radarr
